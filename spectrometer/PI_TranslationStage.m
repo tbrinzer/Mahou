@@ -168,8 +168,9 @@ classdef PI_TranslationStage < hgsetget
                 %move to last reset position
                 MoveTo(obj,0,obj.max_speed,0,0);
                                 
-            catch
+            catch err  % Need to trap errors someone and display the message
                 fclose(obj.object);
+                err.message
                 warning('Spectrometer:Interferometer', 'Cannot find translation stage.  Entering simulation mode.');
             end
         end
