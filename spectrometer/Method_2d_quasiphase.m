@@ -169,6 +169,7 @@ methods (Access = protected)
       obj.background.std = zeros(obj.nPixelsPerArray, obj.nSignals);
     end
     obj.result.noise = zeros(1,obj.nPixelsPerArray);    
+    obj.result.t2 = obj.PARAMS.t2;
 
     obj.ext = zeros(obj.nExtInputs,1);
     obj.aux.igram = zeros(1,obj.PARAMS.nShots);
@@ -414,9 +415,8 @@ methods (Access = protected)
       disp(E);
 %    rethrow E;
     end
-    
-    
-    obj.result.phase = phase;
+        
+    obj.result.phase = -phase;
     obj.result.freq = obj.freq;
     obj.result.time = obj.t_axis;
     obj.result.bin = obj.b_axis;
@@ -425,6 +425,9 @@ methods (Access = protected)
     obj.result.t0_bin = find(obj.result.bin==obj.PARAMS.bin_zero)-t0_bin_shift;
     obj.result.PARAMS = obj.PARAMS;
     obj.result.igram = obj.signal.igram;
+    obj.result.phase = analysis.ph;
+    obj.result.t0_bin = find(obj.result.bin==4000);
+
     try
       obj.result = absorptive2dPP(obj.result);
     catch E
