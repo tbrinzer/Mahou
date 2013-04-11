@@ -416,7 +416,7 @@ methods (Access = protected)
 %    rethrow E;
     end
         
-    obj.result.phase = -phase;
+    obj.result.phase = phase;
     obj.result.freq = obj.freq;
     obj.result.time = obj.t_axis;
     obj.result.bin = obj.b_axis;
