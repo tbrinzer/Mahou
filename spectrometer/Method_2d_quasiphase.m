@@ -326,7 +326,7 @@ methods (Access = protected)
       new_pos = obj.initialPosition(i_mot);
       str = ['editMotor' num2str(i_mot)];
       set(obj.handles.(str),'String','moving...');
-      pos = obj.source.motors{i_mot}.MoveTo(new_pos,1700,0,0);
+      pos = obj.source.motors{i_mot}.MoveTo(new_pos,6000,0,0);
       set(obj.handles.(str),'String',num2str(pos));
     end    
     
