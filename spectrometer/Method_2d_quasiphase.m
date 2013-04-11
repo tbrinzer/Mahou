@@ -226,7 +226,7 @@ methods (Access = protected)
     obj.initialPosition(2) = obj.source.motors{2}.GetPosition;
     
     obj.source.motors{1}.MoveTo(obj.PARAMS.start, obj.PARAMS.speed, 0, 0);
-    obj.source.motors{2}.MoveTo(obj.PARAMS.t2,obj.PARAMS.speed,0,0);
+    obj.source.motors{2}.MoveTo(obj.PARAMS.t2,6000,0,0);
     
   end
   
