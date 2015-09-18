@@ -23,7 +23,7 @@ properties (SetAccess = protected)
   ext; %testing external channels for uitable
   signal = struct('data',[],'std',[],'freq',[]);  
 
-  PARAMS = struct('nShots',500,'nScans',-1);
+  PARAMS = struct('nShots',500,'nScans',-1,'nShotsSorted',1);
   
   source = struct('sampler',[],'gate',[],'spect',[],'motors',[]);
 
@@ -46,7 +46,7 @@ properties (SetAccess = protected)
   ind_hene_y = 80;
   ind_chopper = 78;
   ind_ext = 65:80;
-  
+
   nShotsSorted;
   i_scan;
 
@@ -94,7 +94,7 @@ methods
     obj.hRawDataAxes = hRawDataAxes;
     obj.hDiagnosticsPanel = hDiagnosticsPanel;
     obj.handles = handles;
-    
+  
     Initialize(obj);
     
 %     InitializeFreqAxis(obj);
@@ -138,7 +138,8 @@ methods (Access = protected)
     obj.aux.hene_y = zeros(obj.nChopStates,obj.PARAMS.nShotsSorted);
     obj.aux.ext = zeros(obj.nChopStates,obj.PARAMS.nShotsSorted);
     obj.aux.chop = zeros(1,obj.PARAMS.nShots);
-    
+    obj.ind_chop = lookChopper(obj.nSignals,obj.aux.chop); %DAC debugging
+   
   end
     
   function InitializeFreqAxis(obj)
