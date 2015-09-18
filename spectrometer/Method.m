@@ -412,7 +412,8 @@ classdef Method < handle
     field = fieldnames(obj.PARAMS);
     n_fields = length(field);
     for i = 1:n_fields
-      obj.PARAMS.(field{i}) = str2double(get(obj.handles.(['edit' field{i}]), 'String'));
+      %obj.PARAMS.(field{i}) = str2double(get(obj.handles.(['edit' field{i}]), 'String'));
+      obj.PARAMS.(field{i}) = str2num(get(obj.handles.(['edit' field{i}]), 'String'));
     end 
     %obj.PARAMS.nScans = str2double(get(obj.handles.editnScans, 'String'));
     %obj.PARAMS.nShots = str2double(get(obj.handles.editnShots, 'String'));

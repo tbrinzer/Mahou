@@ -125,8 +125,8 @@ methods (Access = protected)
       obj.background.data = zeros(obj.nSignals,obj.nPixelsPerArray);
       obj.background.std = zeros(obj.nSignals,obj.nPixelsPerArray);
     end
-    obj.result.data = zeros(1,obj.PARAMS.nShots);
-    obj.result.noise = zeros(1,obj.nPixelsPerArray);
+    obj.result.data = zeros(length(obj.PARAMS.chan),obj.PARAMS.nShots);
+    obj.result.noise = zeros(length(obj.PARAMS.chan),obj.nPixelsPerArray);
 
     obj.ext = zeros(obj.nExtInputs,1);
     obj.aux.igram = zeros(1,obj.PARAMS.nShots);
@@ -150,9 +150,14 @@ methods (Access = protected)
     %hold(obj.hMainAxes,'off');
     
     %obj.hPlotMain = bar(obj.hMainAxes,obj.freq,obj.result.data,'hist');
-    obj.hPlotMain = plot(obj.hMainAxes,obj.freq,obj.result.data,'g');
-    set(obj.hPlotMain,'XDataSource','obj.freq',...
-      'YDataSource','obj.result.data')
+    obj.hPlotMain = plot(obj.hMainAxes,obj.freq,obj.result.data,'g'); %handle
+%     set(obj.hPlotMain,'XDataSource','obj.freq',...
+%       'YDataSource','obj.result.data')
+    set(obj.hPlotMain,'XDataSource','obj.freq')
+    for ii = 1:length(obj.hPlotMain)
+      set(obj.hPlotMain(ii),'YDataSource',['obj.result.data(' num2str(ii),',:)'])
+    end
+
 
     %set(obj.hPlotMain,'FaceColor','none','EdgeColor',[0 1 0]);
     set(obj.hMainAxes,'Xlim',[obj.freq(1) obj.freq(end)]);
