@@ -21,9 +21,9 @@ properties (SetAccess = protected)
   ext;
   signal = struct('data',[],'std',[],'freq',[],'igram',[]);  
   
-  PARAMS = struct('nShots',[],'nScans',500,'start',-500, 'end', 1000, ...
+  PARAMS = struct('nShots',[],'nScans',500,'start',-500, 'end', 5000, ...
       'speed', 1700, 'bin_zero', 4000, 'bin_min', timeFsToBin(-500, 4000)+1, ...
-      'bin_max', timeFsToBin(1000, 4000)-20, 'acceleration', 66713,'t2',200 ); % 66713 = 2*fs equiv of 10mm
+      'bin_max', timeFsToBin(5000, 4000)-20, 'acceleration', 66713,'t2',200 ); % 66713 = 2*fs equiv of 10mm
   
   source = struct('sampler',[],'gate',[],'spect',[],'motors',[]);
   position;
