@@ -25,7 +25,7 @@ classdef (Sealed) Sampler_FPAS < handle
         hTask;
         nSamplesPerSecond;
         timeout;
-        COMPortID = 'COM2';
+        COMPortID = 'COM3';
         COMPort;
         COMPortOpts = struct('BaudRate',9600,...
           'Parity','none',...
@@ -114,7 +114,7 @@ classdef (Sealed) Sampler_FPAS < handle
                 DAQmxResetDevice(obj.lib,obj.deviceName);
                 
                 %try the COMPort
-                InitializeCOMPort(obj);
+                %InitializeCOMPort(obj);
                 
                 %
                 obj.initialized = 1;
