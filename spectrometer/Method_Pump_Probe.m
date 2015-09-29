@@ -44,7 +44,7 @@ properties (SetAccess = protected)
   ind_igram = 65;
   ind_hene_x = 79;
   ind_hene_y = 80;
-  ind_chopper = 71;
+  ind_chopper = 73;
   ind_ext = 65:80;
   
   nShotsSorted;
@@ -125,19 +125,19 @@ methods (Access = protected)
     obj.signal.data = zeros(obj.nSignals,obj.nPixelsPerArray);
     obj.signal.std = zeros(obj.nSignals,obj.nPixelsPerArray);
     obj.LoadBackground;
-    if isempty(obj.background.data),
-      obj.background.data = zeros(obj.nSignals,obj.nPixelsPerArray);
-      obj.background.std = zeros(obj.nSignals,obj.nPixelsPerArray);
+    if isempty(obj.background.data) || any(size(obj.background.data)~=size(obj.signal.data))
+        obj.background.data = zeros(obj.nSignals,obj.nPixelsPerArray);
+        obj.background.std = zeros(obj.nSignals,obj.nPixelsPerArray);
     end
     obj.result.data = zeros(1,obj.nPixelsPerArray);
     obj.result.noise = zeros(1,obj.nPixelsPerArray);
 
     obj.ext = zeros(obj.nExtInputs,obj.nChopStates);
 
-    obj.aux.igram = zeros(obj.nChopStates,obj.PARAMS.nShotsSorted);
-    obj.aux.hene_x = zeros(obj.nChopStates,obj.PARAMS.nShotsSorted);
-    obj.aux.hene_y = zeros(obj.nChopStates,obj.PARAMS.nShotsSorted);
-    obj.aux.ext = zeros(obj.nChopStates,obj.PARAMS.nShotsSorted);
+    obj.aux.igram = zeros(obj.nChopStates,obj.nShotsSorted);
+    obj.aux.hene_x = zeros(obj.nChopStates,obj.nShotsSorted);
+    obj.aux.hene_y = zeros(obj.nChopStates,obj.nShotsSorted);
+    obj.aux.ext = zeros(obj.nChopStates,obj.nShotsSorted);
     obj.aux.chop = zeros(1,obj.PARAMS.nShots);
     
   end
@@ -269,15 +269,15 @@ methods (Access = protected)
   
   function ProcessSampleSort(obj)
     %assign chopper data
-    obj.aux.chop = obj.sample(obj.ind_chop,:);
+    obj.aux.chop = obj.sample(obj.ind_chopper,:);
     
     %look to see when chopper open/closed (pumped/unpumped)
-    out = zeros(nChopStates,length(ChopperSignal));
-    switch nChopStates
+    out = zeros(obj.nChopStates,length(obj.aux.chop));
+    switch obj.nChopStates
         case 1
         %do nothing because 
         case 2
-            out(1,:) = (sample(ind_chopper,:)<1);
+            out(1,:) = (obj.sample(obj.ind_chopper,:)<15000);
             out(2,:) = ~out(1,:);    
         otherwise
             error('SRGLAB:unknowncase','nSignals = %f not allowed. only 1, 2, 4 supported',nChopStates)
@@ -292,13 +292,14 @@ methods (Access = protected)
     obj.sorted(:,:,3) = obj.sample(obj.ind_array(1,:),ind_chop_off);
     obj.sorted(:,:,4) = obj.sample(obj.ind_array(2,:),ind_chop_off);
 
-    %assign sorted values for external signals
-    for i = 1:obj.nChopStates
-      obj.aux.igram(i,:) = obj.sample(obj.ind_igram,ind_chop(i,:));
-      obj.aux.hene_x(i,:) = obj.sample(obj.ind_hene_x,ind_chop(i,:));
-      obj.aux.hene_y(i,:) = obj.sample(obj.ind_hene_y,ind_chop(i,:));
-      obj.aux.ext(i,:) = obj.sample(obj.ind_ext,ind_chop(i,:));
-    end
+    %This should be changed to assign data based on obj.sample(obj.ind_igram,obj.ind_chop_on/off);
+%     %assign sorted values for external signals
+%     for i = 1:obj.nChopStates
+%       obj.aux.igram(i,:) = obj.sample(obj.ind_igram,obj.ind_chopper(i,:));
+%       obj.aux.hene_x(i,:) = obj.sample(obj.ind_hene_x,obj.ind_chopper(i,:));
+%       obj.aux.hene_y(i,:) = obj.sample(obj.ind_hene_y,obj.ind_chopper(i,:));
+%       obj.aux.ext(i,:) = obj.sample(obj.ind_ext,obj.ind_chopper(i,:));
+%     end
     
   end
 

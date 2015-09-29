@@ -121,7 +121,7 @@ methods (Access = protected)
     obj.signal.data = zeros(obj.nSignals,obj.nPixelsPerArray);
     obj.signal.std = zeros(obj.nSignals,obj.nPixelsPerArray);
     obj.LoadBackground;
-    if isempty(obj.background.data),
+    if isempty(obj.background.data) || any(size(obj.background.data)~=size(obj.signal.data))
       obj.background.data = zeros(obj.nSignals,obj.nPixelsPerArray);
       obj.background.std = zeros(obj.nSignals,obj.nPixelsPerArray);
     end
