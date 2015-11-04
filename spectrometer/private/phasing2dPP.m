@@ -79,7 +79,7 @@ i_max = i_max +ii(1)-1;
 function [phase,ph,delta_t_fringes,i_fit] = phasingFinalPhase(n_pairs,abs_array,phase_array,w,i_max)
 %phasingFinalPhase
 global c_cmfs wavenumbersToInvFs fringeToFs
-n_fit_points = 51;
+n_fit_points = 21;
 fit_points_offset = (n_fit_points-1)/2;
 i_fit = i_max-fit_points_offset:i_max+fit_points_offset; %take n_points points around the max
 

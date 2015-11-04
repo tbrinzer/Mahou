@@ -1,4 +1,4 @@
-classdef Method_Show_Spectrum < Method
+classdef Method_Show_Spectrum_Drop_Runts < Method
 %inherits from Method superclass
 
 properties (Hidden,SetAccess = immutable)
@@ -23,7 +23,7 @@ properties (SetAccess = protected)
   ext; %testing external channels for uitable
   signal = struct('data',[],'std',[],'freq',[]);  
   
-  PARAMS = struct('nShots',500,'nScans',-1);
+  PARAMS = struct('nShots',500,'nScans',-1,'threshold',10);
   
   source = struct('sampler',[],'gate',[],'spect',[],'motors',[]);
 
@@ -45,7 +45,7 @@ properties (SetAccess = protected)
   ind_hene_x = 79;
   ind_hene_y = 80
   ind_ext = 65:80;
-  
+  ind_fast_photodiode = 68;
   nShotsSorted;
   i_scan;
 
@@ -61,7 +61,7 @@ end
 % public methods
 %
 methods
-  function obj = Method_Show_Spectrum(sampler,gate,spect,motors,handles,hParamsPanel,hMainAxes,hRawDataAxes,hDiagnosticsPanel)
+  function obj = Method_Show_Spectrum_Drop_Runts(sampler,gate,spect,motors,handles,hParamsPanel,hMainAxes,hRawDataAxes,hDiagnosticsPanel)
     %constructor
     
     if nargin == 0
@@ -71,7 +71,7 @@ methods
       return
     elseif nargin == 1
       %If item in is a method class object, just return that object.
-      if isa(obj,'Method_Show_Spectrum')
+      if isa(obj,'Method_Show_Spectrum_Drop_Runts')
         return
       elseif isa(obj,'Method')
         %what to do if it is a different class but still a Method? How does
@@ -121,7 +121,7 @@ methods (Access = protected)
     obj.signal.data = zeros(obj.nSignals,obj.nPixelsPerArray);
     obj.signal.std = zeros(obj.nSignals,obj.nPixelsPerArray);
     obj.LoadBackground;
-    if isempty(obj.background.data) || any(size(obj.background.data)~=size(obj.signal.data))
+    if isempty(obj.background.data),
       obj.background.data = zeros(obj.nSignals,obj.nPixelsPerArray);
       obj.background.std = zeros(obj.nSignals,obj.nPixelsPerArray);
     end
@@ -292,8 +292,13 @@ methods (Access = protected)
   end
 
   function ProcessSampleAvg(obj)
-    obj.signal.data = squeeze(mean(obj.sorted,2))';
-    obj.signal.std = squeeze(std(obj.sorted,0,2))';
+    indShots = processRunts(obj.sorted,obj.PARAMS.threshold);
+    newNshots = sum(indShots(:));
+    disp(newNshots)
+    obj.signal.data = squeeze(mean(obj.sorted(:,indShots,:),2))';
+    obj.signal.std = squeeze(std(obj.sorted(:,indShots,:),0,2))';
+%     obj.signal.data = squeeze(mean(obj.sorted,2))';
+%     obj.signal.std = squeeze(std(obj.sorted,0,2))';
     obj.ext = mean(obj.ext,2);
   end
   

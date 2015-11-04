@@ -21,9 +21,9 @@ properties (SetAccess = protected)
   ext;
   signal = struct('data',[],'std',[],'freq',[],'igram',[]);  
   
-  PARAMS = struct('nShots',[],'nScans',500,'start',-500, 'end', 1000, ...
+  PARAMS = struct('nShots',[],'nScans',500,'start',-500, 'end', 5000, ...
       'speed', 1700, 'bin_zero', 4000, 'bin_min', timeFsToBin(-500, 4000)+1, ...
-      'bin_max', timeFsToBin(1000, 4000)-20, 'acceleration', 66713,'t2',200 ); % 66713 = 2*fs equiv of 10mm
+      'bin_max', timeFsToBin(5000, 4000)-20, 'acceleration', 66713,'t2',200 ); % 66713 = 2*fs equiv of 10mm
   
   source = struct('sampler',[],'gate',[],'spect',[],'motors',[]);
   position;
@@ -168,7 +168,9 @@ methods (Access = protected)
       obj.background.data = zeros(obj.nPixelsPerArray, obj.nSignals);
       obj.background.std = zeros(obj.nPixelsPerArray, obj.nSignals);
     end
-    
+    obj.result.noise = zeros(1,obj.nPixelsPerArray);    
+    obj.result.t2 = obj.PARAMS.t2;
+
     obj.ext = zeros(obj.nExtInputs,1);
     obj.aux.igram = zeros(1,obj.PARAMS.nShots);
     obj.aux.hene_x = zeros(1,obj.PARAMS.nShots);
@@ -224,7 +226,7 @@ methods (Access = protected)
     obj.initialPosition(2) = obj.source.motors{2}.GetPosition;
     
     obj.source.motors{1}.MoveTo(obj.PARAMS.start, obj.PARAMS.speed, 0, 0);
-    obj.source.motors{2}.MoveTo(obj.PARAMS.t2,obj.PARAMS.speed,0,0);
+    obj.source.motors{2}.MoveTo(obj.PARAMS.t2,6000,0,0);
     
   end
   
@@ -324,7 +326,7 @@ methods (Access = protected)
       new_pos = obj.initialPosition(i_mot);
       str = ['editMotor' num2str(i_mot)];
       set(obj.handles.(str),'String','moving...');
-      pos = obj.source.motors{i_mot}.MoveTo(new_pos,1700,0,0);
+      pos = obj.source.motors{i_mot}.MoveTo(new_pos,6000,0,0);
       set(obj.handles.(str),'String',num2str(pos));
     end    
     
@@ -413,17 +415,20 @@ methods (Access = protected)
       disp(E);
 %    rethrow E;
     end
-    
-    
+       
+    obj.result.spec_calib = 0;
     obj.result.phase = phase;
     obj.result.freq = obj.freq;
     obj.result.time = obj.t_axis;
     obj.result.bin = obj.b_axis;
-    obj.result.zeropad = 2048;
+    obj.result.zeropad = 2*(obj.PARAMS.bin_max - obj.PARAMS.bin_zero);              % @@@Something smarter
     obj.result.PP = 1000*log10(obj.signal.data(:,:,1)./obj.signal.data(:,:,2));%squeeze(obj.signal.data(:,:,1));
     obj.result.t0_bin = find(obj.result.bin==obj.PARAMS.bin_zero)-t0_bin_shift;
     obj.result.PARAMS = obj.PARAMS;
     obj.result.igram = obj.signal.igram;
+    %obj.result.phase = analysis.ph;
+    %obj.result.t0_bin = find(obj.result.bin==4000);
+
     try
       obj.result = absorptive2dPP(obj.result);
     catch E

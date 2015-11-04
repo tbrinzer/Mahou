@@ -1,6 +1,7 @@
-function [indShots] = processRunts(sorted)
+function [indShots] = processRunts(sorted,threshold)
 
-threshold = 10; % number of standard deviations away from the mean we will allow
+% threshold = 10; % number of standard deviations away from the mean we will allow
+
 strictness = 'strict';
 Z_score_type = 'modified';
 
